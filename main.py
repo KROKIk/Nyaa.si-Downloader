@@ -4,10 +4,13 @@ import feedparser
 import textdistance as td
 import transmissionrpc
 from datetime import datetime
+import config
+
 
 today = datetime.today().strftime("%d/%m/%Y %H:%M")
-
 url = 'https://graphql.anilist.co'
+
+#TODO pozbyć się tego
 media_id = []
 id_list = []
 title_list = []
@@ -15,6 +18,7 @@ magnet_list = []
 log_list = []
 acc_list = []
 match_list = []
+
 
 query = '''
 query ($id: String, $page: Int) { # Define which variables will be used in the query (id)
@@ -28,7 +32,7 @@ query ($id: String, $page: Int) { # Define which variables will be used in the q
 
 for n in range(10):
     variables = {
-        'id': 'KROKIk',
+        'id': config.anilist_username,
         'page': n,
     }
     # Make the HTTP Api request
@@ -50,7 +54,7 @@ query ($id: String, $page: Int) { # Define which variables will be used in the q
 '''
 for n in range(10):
     variables = {
-        'id': 'KROKIk',
+        'id': config.anilist_username,
         'page': n,
     }
     # Make the HTTP Api request
@@ -88,13 +92,15 @@ for anime in media_id:
     title_list.append(json_obj)
 #print(title_list)
 
-
-f = open("id.txt", "r")
+try:
+    f = open("id.txt", "r")
+except FileNotFoundError:
+    f = open("id.txt", "w+")
 last_id = f.readline()
 f.close()
 
 #rrs = 'https://horriblesubs.info/rss.php?res=1080'
-rrs = 'http://nyaa.si/?page=rss&q=[HorribleSubs]+[1080p]' #rss horrible subs nie działa poprawnie
+rrs = 'http://nyaa.si/?page=rss&q=[HorribleSubs]+[1080p]'
 feed = feedparser.parse(rrs)
 
 for post in feed['entries']:
@@ -121,7 +127,7 @@ f = open("id.txt", "w+")
 f.write(feed['entries'][0]['id'])
 f.close()
 try:
-    tc = transmissionrpc.Client('192.168.1.5', port=9091)
+    tc = transmissionrpc.Client(config.transmission_ip, port=config.transmission_ip)
     for link in magnet_list:
         temp_log = log_list[magnet_list.index(link)][15:-17]
         tc.add_torrent(link, download_dir='/usr/local/etc/transmission/home/Downloads/' + temp_log)
