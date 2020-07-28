@@ -94,7 +94,7 @@ last_id = f.readline()
 f.close()
 
 #rrs = 'https://horriblesubs.info/rss.php?res=1080'
-rrs = 'http://nyaa.si/?page=rss&q=[HorribleSubs]+[1080p]'
+rrs = 'http://nyaa.si/?page=rss&q=[HorribleSubs]+[1080p]' #rss horrible subs nie działa poprawnie
 feed = feedparser.parse(rrs)
 
 for post in feed['entries']:
